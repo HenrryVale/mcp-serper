@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP-Serper Demo</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #7f8c8d;
+            --border-color: #e0e0e0;
+            --highlight-color: #f1c40f;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        
+        .description {
+            color: #ecf0f1;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            padding: 0 20px;
+        }
+        
+        .search-container {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-title {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+        
+        select {
+            height: 42px;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .btn-cancel {
+            background-color: var(--error-color);
+            margin-left: 10px;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+        
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-btn {
+            background-color: #ecf0f1;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px 15px;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .toggle-btn:first-child {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        
+        .toggle-btn:last-child {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .toggle-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .form-type {
+            display: none;
+        }
+        
+        .form-type.active {
+            display: block;
+        }
+        
+        .results-container {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 200px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-value {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .result-item {
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .result-item h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .result-item .source {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+        
+        .result-item .content {
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .content::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 3px;
+        }
+        
+        .content::-webkit-scrollbar-thumb:hover {
+            background: #95a5a6;
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            background-color: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--error-color);
+        }
+        
+        .heartbeat {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.6;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .btn-cancel {
+                margin-left: 0;
+            }
+            
+            .actions {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MCP-Serper Demo</h1>
+        <p class="description">Busca documentación técnica usando Google Serper API con streaming de resultados en tiempo real</p>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <h2 class="search-title">Buscar Documentación</h2>
+            
+            <div class="toggle-container">
+                <div class="toggle-btn active" data-target="library-form">Bibliotecas predefinidas</div>
+                <div class="toggle-btn" data-target="domain-form">Dominio personalizado</div>
+            </div>
+            
+            <div id="library-form" class="form-type active">
+                <div class="form-group">
+                    <label for="library">Biblioteca:</label>
+                    <select id="library" name="library">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="react">React</option>
+                        <option value="vue">Vue.js</option>
+                        <option value="angular">Angular</option>
+                        <option value="django">Django</option>
+                        <option value="flask">Flask</option>
+                        <option value="fastapi">FastAPI</option>
+                        <option value="nodejs">Node.js</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C++</option>
+                        <option value="sql">SQL</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="mongodb">MongoDB</option>
+                        <option value="redis">Redis</option>
+                        <option value="docker">Docker</option>
+                        <option value="kubernetes">Kubernetes</option>
+                        <option value="aws">AWS</option>
+                        <option value="azure">Azure</option>
+                        <option value="gcp">Google Cloud</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="library-query">Consulta:</label>
+                    <input type="text" id="library-query" name="library-query" placeholder="Ej: 'cómo implementar async/await'">
+                </div>
+                
+                <div class="actions">
+                    <button id="search-library-btn" class="btn">Buscar</button>
+                    <button id="cancel-library-btn" class="btn btn-cancel" style="display: none;">Cancelar</button>
+                </div>
+            </div>
+            
+            <div id="domain-form" class="form-type">
+                <div class="form-group">
+                    <label for="domain">Dominio:</label>
+                    <input type="text" id="domain" name="domain" placeholder="Ej: example.com, docs.example.org">
+                </div>
+                
+                <div class="form-group">
+                    <label for="domain-query">Consulta:</label>
+                    <input type="text" id="domain-query" name="domain-query" placeholder="Ej: 'instrucciones de instalación'">
+                </div>
+                
+                <div class="actions">
+                    <button id="search-domain-btn" class="btn">Buscar</button>
+                    <button id="cancel-domain-btn" class="btn btn-cancel" style="display: none;">Cancelar</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-container">
+            <div class="progress-bar">
+                <div id="progress-value" class="progress-value"></div>
+            </div>
+            
+            <div id="status" class="status">Listo para buscar...</div>
+            
+            <div id="results"></div>
+        </div>
+    </div>
+    
+    <footer>
+        MCP-Serper &copy; 2025 | Búsqueda de documentación en tiempo real con SSE
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            const formTypes = document.querySelectorAll('.form-type');
+            const searchLibraryBtn = document.getElementById('search-library-btn');
+            const cancelLibraryBtn = document.getElementById('cancel-library-btn');
+            const searchDomainBtn = document.getElementById('search-domain-btn');
+            const cancelDomainBtn = document.getElementById('cancel-domain-btn');
+            const progressValue = document.getElementById('progress-value');
+            const statusElement = document.getElementById('status');
+            const resultsElement = document.getElementById('results');
+            
+            // Variables para SSE
+            let eventSource = null;
+            let clientId = null;
+            let isSearching = false;
+            
+            // Toggle entre formularios
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+                    formTypes.forEach(f => f.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // Búsqueda en biblioteca
+            searchLibraryBtn.addEventListener('click', function() {
+                const library = document.getElementById('library').value;
+                const query = document.getElementById('library-query').value.trim();
+                
+                if (!query) {
+                    setStatus('Por favor, ingresa una consulta', true);
+                    return;
+                }
+                
+                startSearch();
+                searchLibrary(library, query);
+            });
+            
+            // Búsqueda en dominio personalizado
+            searchDomainBtn.addEventListener('click', function() {
+                const domain = document.getElementById('domain').value.trim();
+                const query = document.getElementById('domain-query').value.trim();
+                
+                if (!domain) {
+                    setStatus('Por favor, ingresa un dominio', true);
+                    return;
+                }
+                
+                if (!query) {
+                    setStatus('Por favor, ingresa una consulta', true);
+                    return;
+                }
+                
+                startSearch();
+                searchDomain(domain, query);
+            });
+            
+            // Cancelar búsqueda (biblioteca)
+            cancelLibraryBtn.addEventListener('click', function() {
+                cancelSearch();
+            });
+            
+            // Cancelar búsqueda (dominio)
+            cancelDomainBtn.addEventListener('click', function() {
+                cancelSearch();
+            });
+            
+            // Función para iniciar búsqueda
+            function startSearch() {
+                isSearching = true;
+                searchLibraryBtn.disabled = true;
+                searchDomainBtn.disabled = true;
+                cancelLibraryBtn.style.display = 'inline-block';
+                cancelDomainBtn.style.display = 'inline-block';
+                resultsElement.innerHTML = '';
+                progressValue.style.width = '0%';
+                setStatus('Conectando...', false, true);
+                
+                // Configurar SSE
+                setupSSE();
+            }
+            
+            // Función para cancelar búsqueda
+            function cancelSearch() {
+                if (eventSource) {
+                    eventSource.close();
+                }
+                
+                if (clientId) {
+                    fetch('/api/cancel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ client_id: clientId })
+                    }).catch(error => console.error('Error al cancelar:', error));
+                }
+                
+                endSearch();
+                setStatus('Búsqueda cancelada', false);
+            }
+            
+            // Función para finalizar búsqueda
+            function endSearch() {
+                isSearching = false;
+                searchLibraryBtn.disabled = false;
+                searchDomainBtn.disabled = false;
+                cancelLibraryBtn.style.display = 'none';
+                cancelDomainBtn.style.display = 'none';
+                
+                if (eventSource) {
+                    eventSource.close();
+                    eventSource = null;
+                }
+            }
+            
+            // Función para configurar SSE
+            function setupSSE() {
+                if (eventSource) {
+                    eventSource.close();
+                }
+                
+                eventSource = new EventSource('/api/sse');
+                
+                eventSource.onopen = function() {
+                    console.log('Conexión SSE establecida');
+                };
+                
+                eventSource.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleSSEMessage(data);
+                    } catch (err) {
+                        console.error('Error al procesar mensaje SSE:', err);
+                    }
+                };
+                
+                eventSource.onerror = function(err) {
+                    console.error('Error en SSE:', err);
+                    if (isSearching) {
+                        setStatus('Error de conexión. Intentando reconectar...', true, true);
+                    }
+                };
+            }
+            
+            // Función para manejar mensajes SSE
+            function handleSSEMessage(data) {
+                switch(data.type) {
+                    case 'info':
+                        setStatus(data.message, false);
+                        break;
+                        
+                    case 'status':
+                        setStatus(data.message, false);
+                        if (data.message.includes('completada') || data.message.includes('cancelada')) {
+                            endSearch();
+                        }
+                        break;
+                        
+                    case 'progress':
+                        updateProgress(data.current, data.total, data.title);
+                        break;
+                        
+                    case 'content':
+                        addResultItem(data);
+                        break;
+                        
+                    case 'error':
+                        setStatus('Error: ' + data.message, true);
+                        endSearch();
+                        break;
+                        
+                    case 'heartbeat':
+                        // Nada que hacer, solo mantiene la conexión viva
+                        break;
+                        
+                    default:
+                        console.log('Mensaje SSE no reconocido:', data);
+                }
+            }
+            
+            // Función para actualizar barra de progreso
+            function updateProgress(current, total, title) {
+                const percentage = (current / total) * 100;
+                progressValue.style.width = percentage + '%';
+                
+                let statusText = `Procesando: ${current} de ${total}`;
+                if (title) {
+                    statusText += ` - ${title}`;
+                }
+                
+                setStatus(statusText, false);
+            }
+            
+            // Función para agregar elemento de resultado
+            function addResultItem(data) {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                resultItem.innerHTML = `
+                    <h3>${data.title || 'Resultado'}</h3>
+                    <a href="${data.source}" target="_blank" class="source">${data.source}</a>
+                    <div class="content">${data.content}</div>
+                `;
+                
+                resultsElement.appendChild(resultItem);
+                resultItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Función para establecer mensaje de estado
+            function setStatus(message, isError = false, isHeartbeat = false) {
+                statusElement.textContent = message;
+                statusElement.className = 'status';
+                
+                if (isError) {
+                    statusElement.classList.add('error-message');
+                }
+                
+                if (isHeartbeat) {
+                    statusElement.classList.add('heartbeat');
+                }
+            }
+            
+            // Función para buscar en biblioteca
+            function searchLibrary(library, query) {
+                fetch('/api/messages/get_docs_stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ library, query })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        setStatus('Error: ' + data.error, true);
+                        endSearch();
+                        return;
+                    }
+                    
+                    clientId = data.client_id;
+                })
+                .catch(error => {
+                    console.error('Error al iniciar búsqueda:', error);
+                    setStatus('Error al iniciar búsqueda. Por favor, intenta de nuevo.', true);
+                    endSearch();
+                });
+            }
+            
+            // Función para buscar en dominio
+            function searchDomain(domain, query) {
+                fetch('/api/messages/get_docs_from_domain_stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ domain, query })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        setStatus('Error: ' + data.error, true);
+                        endSearch();
+                        return;
+                    }
+                    
+                    clientId = data.client_id;
+                })
+                .catch(error => {
+                    console.error('Error al iniciar búsqueda:', error);
+                    setStatus('Error al iniciar búsqueda. Por favor, intenta de nuevo.', true);
+                    endSearch();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
